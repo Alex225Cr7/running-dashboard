@@ -6,11 +6,11 @@ from datetime import datetime, timedelta
 from dateutil import parser
 import google.genai as genai
 
-INTERVALS_ID = os.environ.get("INTERVALS_ATHLETE_ID")
-INTERVALS_KEY = os.environ.get("INTERVALS_API_KEY")
-TELEGRAM_TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN")
-TELEGRAM_CHAT = os.environ.get("TELEGRAM_CHAT_ID")
-GEMINI_KEY = os.environ.get("GEMINI_API_KEY")
+INTERVALS_ID = os.environ.get("INTERVALS_ATHLETE_ID", "").strip()
+INTERVALS_KEY = os.environ.get("INTERVALS_API_KEY", "").strip()
+TELEGRAM_TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN", "").strip()
+TELEGRAM_CHAT = os.environ.get("TELEGRAM_CHAT_ID", "").strip()
+GEMINI_KEY = os.environ.get("GEMINI_API_KEY", "").strip()
 GITHUB_PAGES_URL = os.environ.get("GITHUB_PAGES_URL", "https://your-github-username.github.io/running-dashboard")
 
 DATA_FILE = "data.json"
