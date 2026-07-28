@@ -62,6 +62,8 @@ def analyze_with_ai(run_data):
         pace = format_pace(run_data.get('distance', 0) / run_data.get('moving_time', 1))
         hr = run_data.get('average_heartrate', 0)
         cadence = run_data.get('average_cadence', 0)
+        if cadence > 0 and cadence <= 130:
+            cadence = round(cadence * 2)
         
         prompt = f"""
         Đóng vai một huấn luyện viên chạy bộ marathon chuyên nghiệp đang kèm một học viên chuẩn bị giải Full Marathon (Sub-4h30).
@@ -83,7 +85,7 @@ def analyze_with_ai(run_data):
         """
         
         response = client.models.generate_content(
-            model='gemini-2.5-flash',
+            model='gemini-2.0-flash',
             contents=prompt
         )
         return response.text.replace("```html", "").replace("```", "").strip()
@@ -134,10 +136,13 @@ def main():
     
     new_runs = []
     
-    # Lọc ra các bài chạy mới
+    # Lọc ra các bài chạy mới hoặc bài chưa được phân tích thành công
     for r in runs_api:
         rid = str(r['id'])
-        if rid not in existing_ids:
+        existing_run = next((item for item in runs_local if str(item["id"]) == rid), None)
+        
+        # Thêm vào danh sách xử lý nếu là bài mới, hoặc bài cũ nhưng AI bị lỗi
+        if not existing_run or "Không thể phân tích" in existing_run.get("ai_analysis", ""):
             new_runs.append(r)
             
     if not new_runs:
@@ -155,6 +160,8 @@ def main():
         pace = format_pace(r.get('distance', 0) / r.get('moving_time', 1))
         hr = r.get('average_heartrate', 0)
         cadence = r.get('average_cadence', 0)
+        if cadence > 0 and cadence <= 130:
+            cadence = round(cadence * 2)
         
         run_date_obj = parser.isoparse(r['start_date_local'])
         run_date_str = run_date_obj.strftime("%d/%m/%Y %H:%M")
@@ -177,8 +184,15 @@ def main():
         # Gửi Telegram
         send_telegram(r)
         
-    # Nối dữ liệu mới vào đầu danh sách cũ
-    updated_data = new_entries + runs_local
+    # Nối dữ liệu mới vào danh sách cũ (cập nhật nếu đã tồn tại)
+    updated_data = runs_local.copy()
+    for new_entry in new_entries:
+        # Tìm xem có bài cũ trùng ID không (trường hợp phân tích lại)
+        idx = next((i for i, item in enumerate(updated_data) if item["id"] == new_entry["id"]), -1)
+        if idx >= 0:
+            updated_data[idx] = new_entry
+        else:
+            updated_data.insert(0, new_entry)
     
     # Cắt giữ lại tối đa 50 bài chạy gần nhất để file ko quá lớn
     updated_data = updated_data[:50]
