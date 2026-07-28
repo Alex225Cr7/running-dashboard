@@ -5,7 +5,7 @@ import base64
 import time
 from datetime import datetime, timedelta
 from dateutil import parser
-import google.genai as genai
+import google.generativeai as genai
 
 INTERVALS_ID = os.environ.get("INTERVALS_ATHLETE_ID", "").strip()
 INTERVALS_KEY = os.environ.get("INTERVALS_API_KEY", "").strip()
@@ -57,7 +57,7 @@ def analyze_with_ai(run_data):
         return "<p>Cập nhật API Key của Gemini để xem nhận xét AI.</p>"
     
     try:
-        client = genai.Client(api_key=GEMINI_KEY)
+        genai.configure(api_key=GEMINI_KEY)
         
         dist = round(run_data.get('distance', 0) / 1000, 2)
         pace = format_pace(run_data.get('distance', 0) / run_data.get('moving_time', 1))
@@ -80,15 +80,13 @@ def analyze_with_ai(run_data):
         3. **Lời khuyên & Đề xuất**: Rút kinh nghiệm gì cho bài chạy tiếp theo trong giáo án?
         
         Lưu ý: 
-        - Phân tích mang tính chuyên môn cao, có chiều sâu giống như các bài phân tích dài trước đây.
+        - Phân tích mang tính chuyên môn cao, có chiều sâu.
         - Trả về định dạng HTML (dùng <h4>, <p>, <ul>, <li>, <strong>). 
         - Tuyệt đối KHÔNG dùng markdown ```html ở đầu và cuối.
         """
         
-        response = client.models.generate_content(
-            model='gemini-1.5-flash-8b',
-            contents=prompt
-        )
+        model = genai.GenerativeModel('gemini-1.5-flash')
+        response = model.generate_content(prompt)
         return response.text.replace("```html", "").replace("```", "").strip()
     except Exception as e:
         print("Lỗi Gemini API:", e)
