@@ -4,7 +4,7 @@ import json
 import base64
 from datetime import datetime, timedelta
 from dateutil import parser
-import google.generativeai as genai
+import google.genai as genai
 
 INTERVALS_ID = os.environ.get("INTERVALS_ATHLETE_ID")
 INTERVALS_KEY = os.environ.get("INTERVALS_API_KEY")
@@ -46,35 +46,37 @@ def analyze_with_ai(run_data):
     if not GEMINI_KEY:
         return "<p>Cập nhật API Key của Gemini để xem nhận xét AI.</p>"
     
-    genai.configure(api_key=GEMINI_KEY)
-    model = genai.GenerativeModel('gemini-1.5-pro')
-    
-    dist = round(run_data.get('distance', 0) / 1000, 2)
-    pace = format_pace(run_data.get('distance', 0) / run_data.get('moving_time', 1))
-    hr = run_data.get('average_heartrate', 0)
-    cadence = run_data.get('average_cadence', 0)
-    
-    prompt = f"""
-    Đóng vai một huấn luyện viên chạy bộ marathon chuyên nghiệp đang kèm một học viên chuẩn bị giải Full Marathon (Sub-4h30).
-    Hãy phân tích thật chi tiết và chuyên sâu bài chạy này:
-    - Quãng đường: {dist} km
-    - Pace trung bình: {pace} /km
-    - Nhịp tim trung bình: {hr} bpm
-    - Guồng chân (Cadence): {cadence} spm
-    
-    Yêu cầu cấu trúc bài phân tích:
-    1. **Đánh giá Hiệu suất & Nỗ lực**: Nhận xét về tương quan giữa Pace và Nhịp tim. Bài chạy này đạt mục tiêu (phục hồi, duy trì hay phát triển) chưa?
-    2. **Động lực học chạy bộ (Running Dynamics)**: Phân tích về Cadence {cadence} spm. Đã tối ưu chưa? Có dấu hiệu lê chân hay sải quá dài không?
-    3. **Lời khuyên & Đề xuất**: Rút kinh nghiệm gì cho bài chạy tiếp theo trong giáo án?
-    
-    Lưu ý: 
-    - Phân tích mang tính chuyên môn cao, có chiều sâu giống như các bài phân tích dài trước đây.
-    - Trả về định dạng HTML (dùng <h4>, <p>, <ul>, <li>, <strong>). 
-    - Tuyệt đối KHÔNG dùng markdown ```html ở đầu và cuối.
-    """
-    
     try:
-        response = model.generate_content(prompt)
+        client = genai.Client(api_key=GEMINI_KEY)
+        
+        dist = round(run_data.get('distance', 0) / 1000, 2)
+        pace = format_pace(run_data.get('distance', 0) / run_data.get('moving_time', 1))
+        hr = run_data.get('average_heartrate', 0)
+        cadence = run_data.get('average_cadence', 0)
+        
+        prompt = f"""
+        Đóng vai một huấn luyện viên chạy bộ marathon chuyên nghiệp đang kèm một học viên chuẩn bị giải Full Marathon (Sub-4h30).
+        Hãy phân tích thật chi tiết và chuyên sâu bài chạy này:
+        - Quãng đường: {dist} km
+        - Pace trung bình: {pace} /km
+        - Nhịp tim trung bình: {hr} bpm
+        - Guồng chân (Cadence): {cadence} spm
+        
+        Yêu cầu cấu trúc bài phân tích:
+        1. **Đánh giá Hiệu suất & Nỗ lực**: Nhận xét về tương quan giữa Pace và Nhịp tim. Bài chạy này đạt mục tiêu (phục hồi, duy trì hay phát triển) chưa?
+        2. **Động lực học chạy bộ (Running Dynamics)**: Phân tích về Cadence {cadence} spm. Đã tối ưu chưa? Có dấu hiệu lê chân hay sải quá dài không?
+        3. **Lời khuyên & Đề xuất**: Rút kinh nghiệm gì cho bài chạy tiếp theo trong giáo án?
+        
+        Lưu ý: 
+        - Phân tích mang tính chuyên môn cao, có chiều sâu giống như các bài phân tích dài trước đây.
+        - Trả về định dạng HTML (dùng <h4>, <p>, <ul>, <li>, <strong>). 
+        - Tuyệt đối KHÔNG dùng markdown ```html ở đầu và cuối.
+        """
+        
+        response = client.models.generate_content(
+            model='gemini-2.5-flash',
+            contents=prompt
+        )
         return response.text.replace("```html", "").replace("```", "").strip()
     except Exception as e:
         print("Lỗi Gemini API:", e)
