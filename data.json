@@ -1,5 +1,16 @@
 [
   {
+    "id": "error-2",
+    "name": "Lỗi API Intervals: Mã 403. Vui lòng kiểm tra lại API Key hoặc ID.",
+    "date": "28/07/2026 09:51",
+    "distance": 0.0,
+    "pace": "0:00",
+    "hr": 0,
+    "cadence": 0,
+    "ai_analysis": "<p>Không thể phân tích lúc này.</p>",
+    "raw_date": "2026-07-28T09:51:39.326638"
+  },
+  {
     "id": "demo-1",
     "name": "Sunday Long Run",
     "date": "26/07/2026 05:00",
