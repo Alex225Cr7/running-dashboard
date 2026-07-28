@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Running Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="background-mesh">
+        <div class="mesh-blob blob-1"></div>
+        <div class="mesh-blob blob-2"></div>
+        <div class="mesh-blob blob-3"></div>
+    </div>
+
+    <div class="container">
+        <header class="glass-panel slide-in-top">
+            <div class="header-content">
+                <div class="title-group">
+                    <h1>Run<span class="highlight">Analytics</span></h1>
+                    <p class="subtitle">Báo cáo hiệu suất tập luyện</p>
+                </div>
+                <div class="last-sync">
+                    <i class="fa-solid fa-rotate"></i> Cập nhật: <span id="sync-time">28/07/2026 15:43</span>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <section class="latest-run fade-in">
+                <h2 class="section-title">Bài chạy gần nhất</h2>
+                <div class="glass-card premium-card">
+                    <div class="card-header">
+                        <h3 id="run-name">Sunday Long Run</h3>
+                        <span class="badge">26/07/2026 05:00</span>
+                    </div>
+                    
+                    <div class="metrics-grid">
+                        <div class="metric-item">
+                            <div class="metric-icon"><i class="fa-solid fa-route"></i></div>
+                            <div class="metric-info">
+                                <span class="metric-label">Quãng đường</span>
+                                <span class="metric-value">21.1 <small>km</small></span>
+                            </div>
+                        </div>
+                        <div class="metric-item">
+                            <div class="metric-icon"><i class="fa-solid fa-stopwatch"></i></div>
+                            <div class="metric-info">
+                                <span class="metric-label">Pace</span>
+                                <span class="metric-value">5:30 <small>/km</small></span>
+                            </div>
+                        </div>
+                        <div class="metric-item">
+                            <div class="metric-icon"><i class="fa-solid fa-heart-pulse"></i></div>
+                            <div class="metric-info">
+                                <span class="metric-label">Nhịp tim TB</span>
+                                <span class="metric-value">152 <small>bpm</small></span>
+                            </div>
+                        </div>
+                        <div class="metric-item">
+                            <div class="metric-icon"><i class="fa-solid fa-shoe-prints"></i></div>
+                            <div class="metric-info">
+                                <span class="metric-label">Guồng chân (Cadence)</span>
+                                <span class="metric-value">175 <small>spm</small></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="ai-analysis">
+                        <div class="ai-header">
+                            <i class="fa-solid fa-wand-magic-sparkles"></i>
+                            <h4>AI Nhận xét</h4>
+                        </div>
+                        <div class="ai-content">
+                            <p>Bài chạy Half Marathon rất tốt. Pace ổn định ở 5:30/km và nhịp tim kiểm soát tốt trong vùng Zone 2-3. Cadence 175 spm là mức tối ưu. <strong>Lưu ý:</strong> Hãy nhớ giãn cơ kỹ sau bài chạy dài để tránh căng cơ bắp chân nhé!</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="history-runs fade-in delay-1">
+                <h2 class="section-title">Lịch sử gần đây</h2>
+                <div class="history-list glass-panel">
+                    
+<div class="history-item">
+    <div class="hist-main">
+        <span class="hist-name">Tempo Thursday</span>
+        <span class="hist-date">23/07</span>
+    </div>
+    <div class="hist-stats">
+        <div class="hist-stat"><span class="hist-val">12.0 km</span><span class="hist-label">Distance</span></div>
+        <div class="hist-stat"><span class="hist-val">5:15</span><span class="hist-label">Pace</span></div>
+        <div class="hist-stat"><span class="hist-val">160</span><span class="hist-label">HR</span></div>
+    </div>
+</div>
+<div class="history-item">
+    <div class="hist-main">
+        <span class="hist-name">Recovery Tuesday</span>
+        <span class="hist-date">21/07</span>
+    </div>
+    <div class="hist-stats">
+        <div class="hist-stat"><span class="hist-val">8.0 km</span><span class="hist-label">Distance</span></div>
+        <div class="hist-stat"><span class="hist-val">6:10</span><span class="hist-label">Pace</span></div>
+        <div class="hist-stat"><span class="hist-val">135</span><span class="hist-label">HR</span></div>
+    </div>
+</div>
+
+                </div>
+            </section>
+        </main>
+        
+        <footer>
+            <p>Generated automatically by <span class="highlight">Antigravity AI</span> & GitHub Actions</p>
+        </footer>
+    </div>
+</body>
+</html>
