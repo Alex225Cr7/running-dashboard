@@ -6,7 +6,6 @@ from datetime import datetime, timedelta
 from dateutil import parser
 import google.generativeai as genai
 
-# Cấu hình từ Biến môi trường
 INTERVALS_ID = os.environ.get("INTERVALS_ATHLETE_ID")
 INTERVALS_KEY = os.environ.get("INTERVALS_API_KEY")
 TELEGRAM_TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN")
@@ -14,14 +13,12 @@ TELEGRAM_CHAT = os.environ.get("TELEGRAM_CHAT_ID")
 GEMINI_KEY = os.environ.get("GEMINI_API_KEY")
 GITHUB_PAGES_URL = os.environ.get("GITHUB_PAGES_URL", "https://your-github-username.github.io/running-dashboard")
 
+DATA_FILE = "data.json"
+
 def fetch_intervals_data():
     if not INTERVALS_ID or not INTERVALS_KEY:
-        print("Thiếu thông tin Intervals.icu")
-        # Trả về dữ liệu mẫu để test giao diện nếu không có API
-        return [
-            {"id": "1", "name": "Morning Easy Run", "start_date_local": datetime.now().isoformat(), "distance": 10500, "moving_time": 3600, "average_heartrate": 142, "average_cadence": 172, "type": "Run"},
-            {"id": "2", "name": "Tempo Run", "start_date_local": (datetime.now() - timedelta(days=2)).isoformat(), "distance": 12000, "moving_time": 3300, "average_heartrate": 158, "average_cadence": 175, "type": "Run"}
-        ]
+        print("Thiếu thông tin Intervals.icu. Chỉ dùng dữ liệu demo.")
+        return []
         
     url = f"https://intervals.icu/api/v1/athlete/{INTERVALS_ID}/activities"
     auth_string = f"API_KEY:{INTERVALS_KEY}"
@@ -33,7 +30,7 @@ def fetch_intervals_data():
     
     response = requests.get(url, headers=headers)
     if response.status_code == 200:
-        return response.json()
+        return [a for a in response.json() if a.get('type') == 'Run']
     else:
         print(f"Lỗi API Intervals: {response.status_code}")
         return []
@@ -50,7 +47,7 @@ def analyze_with_ai(run_data):
         return "<p>Cập nhật API Key của Gemini để xem nhận xét AI.</p>"
     
     genai.configure(api_key=GEMINI_KEY)
-    model = genai.GenerativeModel('gemini-1.5-pro') # Dùng 1.5 pro cho phân tích sâu
+    model = genai.GenerativeModel('gemini-1.5-pro')
     
     dist = round(run_data.get('distance', 0) / 1000, 2)
     pace = format_pace(run_data.get('distance', 0) / run_data.get('moving_time', 1))
@@ -87,7 +84,6 @@ def send_telegram(run_data):
     msg += f"📍 Tên: {run_data.get('name', 'Run')}\n"
     msg += f"📏 Quãng đường: {dist} km\n"
     msg += f"⏱️ Pace: {pace} /km\n"
-    msg += f"❤️ Nhịp tim: {run_data.get('average_heartrate', 0)} bpm\n\n"
     msg += f"👉 Xem phân tích chi tiết tại: {GITHUB_PAGES_URL}"
     
     url = f"https://api.telegram.org/bot{TELEGRAM_TOKEN}/sendMessage"
@@ -98,77 +94,79 @@ def send_telegram(run_data):
     }
     requests.post(url, json=payload)
 
+def load_local_data():
+    if os.path.exists(DATA_FILE):
+        try:
+            with open(DATA_FILE, 'r', encoding='utf-8') as f:
+                return json.load(f)
+        except:
+            return []
+    return []
+
+def save_local_data(data):
+    with open(DATA_FILE, 'w', encoding='utf-8') as f:
+        json.dump(data, f, ensure_ascii=False, indent=2)
+
 def main():
-    activities = fetch_intervals_data()
-    runs = [a for a in activities if a.get('type') == 'Run']
+    runs_api = fetch_intervals_data()
+    runs_local = load_local_data()
     
-    if not runs:
-        print("Không tìm thấy bài chạy nào.")
+    # Tạo set các ID đã có
+    existing_ids = {str(r['id']) for r in runs_local}
+    
+    new_runs = []
+    
+    # Lọc ra các bài chạy mới
+    for r in runs_api:
+        rid = str(r['id'])
+        if rid not in existing_ids:
+            new_runs.append(r)
+            
+    if not new_runs:
+        print("Không có bài chạy mới nào.")
         return
         
-    latest_run = runs[0]
-    history_runs = runs[1:6] # Lấy 5 bài cũ hơn
+    print(f"Phát hiện {len(new_runs)} bài chạy mới!")
     
-    # 1. Chuẩn bị thông số mới nhất
-    dist_km = round(latest_run.get('distance', 0) / 1000, 2)
-    pace = format_pace(latest_run.get('distance', 0) / latest_run.get('moving_time', 1))
-    hr = latest_run.get('average_heartrate', 0)
-    cadence = latest_run.get('average_cadence', 0)
-    
-    run_date_obj = parser.isoparse(latest_run['start_date_local'])
-    run_date_str = run_date_obj.strftime("%d/%m/%Y %H:%M")
-    
-    # 2. Phân tích AI
-    ai_html = analyze_with_ai(latest_run)
-    
-    # 3. Tạo HTML cho lịch sử
-    history_html = ""
-    for r in history_runs:
-        h_dist = round(r.get('distance', 0) / 1000, 2)
-        h_pace = format_pace(r.get('distance', 0) / r.get('moving_time', 1))
-        h_date = parser.isoparse(r['start_date_local']).strftime("%d/%m")
-        h_name = r.get('name', 'Run')
+    # Xử lý các bài mới (Phân tích AI)
+    new_entries = []
+    for r in new_runs:
+        print(f"Đang phân tích bài chạy: {r.get('name')}")
         
-        history_html += f"""
-        <div class="history-item">
-            <div class="hist-main">
-                <span class="hist-name">{h_name}</span>
-                <span class="hist-date">{h_date}</span>
-            </div>
-            <div class="hist-stats">
-                <div class="hist-stat"><span class="hist-val">{h_dist} km</span><span class="hist-label">Distance</span></div>
-                <div class="hist-stat"><span class="hist-val">{h_pace}</span><span class="hist-label">Pace</span></div>
-                <div class="hist-stat"><span class="hist-val">{r.get('average_heartrate', 0)}</span><span class="hist-label">HR</span></div>
-            </div>
-        </div>
-        """
+        dist_km = round(r.get('distance', 0) / 1000, 2)
+        pace = format_pace(r.get('distance', 0) / r.get('moving_time', 1))
+        hr = r.get('average_heartrate', 0)
+        cadence = r.get('average_cadence', 0)
         
-    # 4. Ghi đè vào HTML
-    with open('index.html', 'r', encoding='utf-8') as f:
-        html = f.read()
+        run_date_obj = parser.isoparse(r['start_date_local'])
+        run_date_str = run_date_obj.strftime("%d/%m/%Y %H:%M")
         
-    html = html.replace('{{LAST_SYNC_TIME}}', datetime.now().strftime("%d/%m/%Y %H:%M"))
-    html = html.replace('{{RUN_NAME}}', latest_run.get('name', 'Run'))
-    html = html.replace('{{RUN_DATE}}', run_date_str)
-    html = html.replace('{{RUN_DISTANCE}}', str(dist_km))
-    html = html.replace('{{RUN_PACE}}', pace)
-    html = html.replace('{{RUN_HR}}', str(hr))
-    html = html.replace('{{RUN_CADENCE}}', str(cadence))
-    html = html.replace('{{AI_ANALYSIS_HTML}}', ai_html)
-    html = html.replace('{{HISTORY_ROWS_HTML}}', history_html)
+        ai_html = analyze_with_ai(r)
+        
+        entry = {
+            "id": str(r['id']),
+            "name": r.get('name', 'Run'),
+            "date": run_date_str,
+            "distance": dist_km,
+            "pace": pace,
+            "hr": hr,
+            "cadence": cadence,
+            "ai_analysis": ai_html,
+            "raw_date": r['start_date_local'] # Để sort nếu cần
+        }
+        new_entries.append(entry)
+        
+        # Gửi Telegram
+        send_telegram(r)
+        
+    # Nối dữ liệu mới vào đầu danh sách cũ
+    updated_data = new_entries + runs_local
     
-    with open('index.html', 'w', encoding='utf-8') as f:
-        f.write(html)
-        
-    print("Đã tạo file index.html thành công.")
+    # Cắt giữ lại tối đa 50 bài chạy gần nhất để file ko quá lớn
+    updated_data = updated_data[:50]
     
-    # 5. Gửi Telegram nếu bài chạy mới (trong vòng 24h)
-    time_diff = datetime.now() - run_date_obj.replace(tzinfo=None)
-    if time_diff < timedelta(hours=24):
-        send_telegram(latest_run)
-        print("Đã gửi tin nhắn Telegram.")
-    else:
-        print("Bài chạy cũ, bỏ qua Telegram.")
+    save_local_data(updated_data)
+    print("Đã cập nhật data.json thành công!")
 
 if __name__ == "__main__":
     main()

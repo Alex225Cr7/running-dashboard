@@ -1,0 +1,32 @@
+[
+  {
+    "id": "demo-1",
+    "name": "Sunday Long Run",
+    "date": "26/07/2026 05:00",
+    "distance": 21.1,
+    "pace": "5:30",
+    "hr": 152,
+    "cadence": 175,
+    "ai_analysis": "<p>Bài chạy Half Marathon rất tốt. Pace ổn định ở 5:30/km và nhịp tim kiểm soát tốt trong vùng Zone 2-3. Cadence 175 spm là mức tối ưu. <strong>Lưu ý:</strong> Hãy nhớ giãn cơ kỹ sau bài chạy dài để tránh căng cơ bắp chân nhé!</p>"
+  },
+  {
+    "id": "demo-2",
+    "name": "Tempo Thursday",
+    "date": "23/07/2026 17:30",
+    "distance": 12.0,
+    "pace": "5:15",
+    "hr": 160,
+    "cadence": 178,
+    "ai_analysis": "<p>Bài chạy Tempo rất chất lượng. Khả năng duy trì pace 5:15 ở HR 160 cho thấy ngưỡng Threshold của bạn đang cải thiện. Giữ vững phong độ!</p>"
+  },
+  {
+    "id": "demo-3",
+    "name": "Recovery Tuesday",
+    "date": "21/07/2026 06:00",
+    "distance": 8.0,
+    "pace": "6:10",
+    "hr": 135,
+    "cadence": 170,
+    "ai_analysis": "<p>Một bài phục hồi hoàn hảo. HR 135 là cực kỳ an toàn để cơ bắp nghỉ ngơi mà vẫn duy trì guồng chân.</p>"
+  }
+]
