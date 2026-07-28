@@ -2,6 +2,7 @@ import os
 import requests
 import json
 import base64
+import time
 from datetime import datetime, timedelta
 from dateutil import parser
 import google.genai as genai
@@ -21,7 +22,7 @@ def fetch_intervals_data():
         print(error_msg)
         return [{"id": "error-1", "name": error_msg, "type": "Run", "distance": 0, "moving_time": 1, "start_date_local": datetime.now().isoformat()}]
         
-    oldest_date = (datetime.now() - timedelta(days=30)).strftime("%Y-%m-%dT00:00:00")
+    oldest_date = (datetime.now() - timedelta(days=7)).strftime("%Y-%m-%dT00:00:00")
     newest_date = datetime.now().strftime("%Y-%m-%dT23:59:59")
     url = f"https://intervals.icu/api/v1/athlete/{INTERVALS_ID}/activities?oldest={oldest_date}&newest={newest_date}"
     auth_string = f"API_KEY:{INTERVALS_KEY}"
@@ -189,6 +190,9 @@ def main():
         
         # Gửi Telegram
         send_telegram(r)
+        
+        # Đợi 5 giây để tránh lỗi Rate Limit của Gemini (15 requests/minute)
+        time.sleep(5)
         
     # Nối dữ liệu mới vào danh sách cũ (cập nhật nếu đã tồn tại)
     updated_data = runs_local.copy()
