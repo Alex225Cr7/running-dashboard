@@ -185,3 +185,101 @@ h1, h2, h3 { font-family: 'Outfit', sans-serif; }
     .sidebar { width: 100%; max-height: 300px; }
     .main-content { min-height: 600px; overflow: visible;}
 }
+
+/* Advanced Stats Grid */
+.section-title {
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--text-color);
+}
+
+.advanced-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.adv-stat-item {
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: 12px;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.adv-stat-label {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    margin-bottom: 0.5rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.adv-stat-value {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--text-color);
+}
+
+.adv-stat-value small {
+    font-size: 0.8rem;
+    font-weight: 400;
+    color: var(--text-muted);
+}
+
+/* Zone Chart */
+.zone-chart-container {
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: 16px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.zone-chart {
+    display: flex;
+    height: 24px;
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: 1rem;
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.zone-bar {
+    height: 100%;
+    transition: width 0.5s ease;
+}
+
+.zone-1 { background-color: #94a3b8; } /* Xám */
+.zone-2 { background-color: #3b82f6; } /* Xanh dương */
+.zone-3 { background-color: #10b981; } /* Xanh lá */
+.zone-4 { background-color: #f59e0b; } /* Vàng */
+.zone-5 { background-color: #ef4444; } /* Đỏ */
+
+.zone-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    justify-content: center;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+}
+
+.legend-color {
+    width: 12px;
+    height: 12px;
+    border-radius: 3px;
+    margin-right: 0.5rem;
+}

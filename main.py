@@ -176,8 +176,14 @@ def main():
             "pace": pace,
             "hr": hr,
             "cadence": cadence,
+            "elevation": r.get('total_elevation_gain', 0),
+            "load": r.get('icu_training_load', 0),
+            "calories": r.get('calories', 0),
+            "max_hr": r.get('max_heartrate', 0),
+            "stride": r.get('average_stride', 0),
+            "hr_zones": r.get('icu_hr_zone_times', []),
             "ai_analysis": ai_html,
-            "raw_date": r['start_date_local'] # Để sort nếu cần
+            "raw_date": r['start_date_local']
         }
         new_entries.append(entry)
         
