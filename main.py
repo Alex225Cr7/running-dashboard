@@ -86,7 +86,7 @@ def analyze_with_ai(run_data):
         """
         
         response = client.models.generate_content(
-            model='gemini-1.5-flash',
+            model='gemini-1.5-flash-8b',
             contents=prompt
         )
         return response.text.replace("```html", "").replace("```", "").strip()
