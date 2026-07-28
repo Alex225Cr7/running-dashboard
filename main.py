@@ -55,15 +55,22 @@ def analyze_with_ai(run_data):
     cadence = run_data.get('average_cadence', 0)
     
     prompt = f"""
-    Đóng vai một huấn luyện viên chạy bộ chuyên nghiệp. 
-    Hãy nhận xét ngắn gọn (dưới 150 chữ) về bài chạy này của tôi. Khích lệ và đưa ra 1 điểm lưu ý.
-    Thông số:
+    Đóng vai một huấn luyện viên chạy bộ marathon chuyên nghiệp đang kèm một học viên chuẩn bị giải Full Marathon (Sub-4h30).
+    Hãy phân tích thật chi tiết và chuyên sâu bài chạy này:
     - Quãng đường: {dist} km
     - Pace trung bình: {pace} /km
     - Nhịp tim trung bình: {hr} bpm
     - Guồng chân (Cadence): {cadence} spm
     
-    Trả về định dạng HTML cơ bản (chỉ dùng thẻ <p>, <strong>, <ul>, <li> nếu cần). Không dùng markdown ```html.
+    Yêu cầu cấu trúc bài phân tích:
+    1. **Đánh giá Hiệu suất & Nỗ lực**: Nhận xét về tương quan giữa Pace và Nhịp tim. Bài chạy này đạt mục tiêu (phục hồi, duy trì hay phát triển) chưa?
+    2. **Động lực học chạy bộ (Running Dynamics)**: Phân tích về Cadence {cadence} spm. Đã tối ưu chưa? Có dấu hiệu lê chân hay sải quá dài không?
+    3. **Lời khuyên & Đề xuất**: Rút kinh nghiệm gì cho bài chạy tiếp theo trong giáo án?
+    
+    Lưu ý: 
+    - Phân tích mang tính chuyên môn cao, có chiều sâu giống như các bài phân tích dài trước đây.
+    - Trả về định dạng HTML (dùng <h4>, <p>, <ul>, <li>, <strong>). 
+    - Tuyệt đối KHÔNG dùng markdown ```html ở đầu và cuối.
     """
     
     try:
