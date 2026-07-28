@@ -17,10 +17,13 @@ DATA_FILE = "data.json"
 
 def fetch_intervals_data():
     if not INTERVALS_ID or not INTERVALS_KEY:
-        print("Thiếu thông tin Intervals.icu. Chỉ dùng dữ liệu demo.")
-        return []
+        error_msg = f"Lỗi: Thiếu ID hoặc API Key của Intervals. ID: {'Có' if INTERVALS_ID else 'Không'}, Key: {'Có' if INTERVALS_KEY else 'Không'}"
+        print(error_msg)
+        return [{"id": "error-1", "name": error_msg, "type": "Run", "distance": 0, "moving_time": 1, "start_date_local": datetime.now().isoformat()}]
         
-    url = f"https://intervals.icu/api/v1/athlete/{INTERVALS_ID}/activities"
+    oldest_date = (datetime.now() - timedelta(days=30)).strftime("%Y-%m-%dT00:00:00")
+    newest_date = datetime.now().strftime("%Y-%m-%dT23:59:59")
+    url = f"https://intervals.icu/api/v1/athlete/{INTERVALS_ID}/activities?oldest={oldest_date}&newest={newest_date}"
     auth_string = f"API_KEY:{INTERVALS_KEY}"
     b64_auth = base64.b64encode(auth_string.encode('ascii')).decode('ascii')
     
@@ -28,12 +31,18 @@ def fetch_intervals_data():
         'Authorization': f'Basic {b64_auth}'
     }
     
-    response = requests.get(url, headers=headers)
-    if response.status_code == 200:
-        return [a for a in response.json() if a.get('type') == 'Run']
-    else:
-        print(f"Lỗi API Intervals: {response.status_code}")
-        return []
+    try:
+        response = requests.get(url, headers=headers)
+        if response.status_code == 200:
+            return [a for a in response.json() if a.get('type') == 'Run']
+        else:
+            error_msg = f"Lỗi API Intervals: Mã {response.status_code}. Vui lòng kiểm tra lại API Key hoặc ID."
+            print(error_msg)
+            return [{"id": "error-2", "name": error_msg, "type": "Run", "distance": 0, "moving_time": 1, "start_date_local": datetime.now().isoformat()}]
+    except Exception as e:
+        error_msg = f"Lỗi kết nối mạng khi tải dữ liệu Intervals: {str(e)}"
+        print(error_msg)
+        return [{"id": "error-3", "name": error_msg, "type": "Run", "distance": 0, "moving_time": 1, "start_date_local": datetime.now().isoformat()}]
 
 def format_pace(speed_m_s):
     if not speed_m_s or speed_m_s <= 0: return "0:00"
