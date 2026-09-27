@@ -1,5 +1,30 @@
 [
   {
+    "id": "i190686436",
+    "name": "Morning Run",
+    "date": "27/09/2026 05:19",
+    "distance": 15.51,
+    "pace": "6:21",
+    "hr": 148,
+    "cadence": 187,
+    "elevation": 156.3225,
+    "load": 130,
+    "calories": 960,
+    "max_hr": 172,
+    "stride": 0.84094554,
+    "hr_zones": [
+      1839,
+      2676,
+      1125,
+      278,
+      4,
+      0,
+      0
+    ],
+    "ai_analysis": "<p>Không thể phân tích lúc này.</p>",
+    "raw_date": "2026-09-27T05:19:22"
+  },
+  {
     "id": "i190524806",
     "name": "Evening Run",
     "date": "26/09/2026 18:19",
