@@ -1,5 +1,30 @@
 [
   {
+    "id": "i202980520",
+    "name": "Morning Run",
+    "date": "29/10/2026 06:16",
+    "distance": 6.48,
+    "pace": "6:40",
+    "hr": 146,
+    "cadence": 186,
+    "elevation": 28.766577,
+    "load": 51,
+    "calories": 412,
+    "max_hr": 160,
+    "stride": 0.80439764,
+    "hr_zones": [
+      718,
+      1489,
+      396,
+      0,
+      0,
+      0,
+      0
+    ],
+    "ai_analysis": "<p>Không thể phân tích lúc này.</p>",
+    "raw_date": "2026-10-29T06:16:38"
+  },
+  {
     "id": "i202742380",
     "name": "Evening Run",
     "date": "28/10/2026 19:06",
@@ -1223,30 +1248,5 @@
     ],
     "ai_analysis": "<p>Không thể phân tích lúc này.</p>",
     "raw_date": "2026-08-06T18:31:21"
-  },
-  {
-    "id": "i172605375",
-    "name": "Afternoon Run",
-    "date": "31/07/2026 17:06",
-    "distance": 5.02,
-    "pace": "7:29",
-    "hr": 144,
-    "cadence": 174,
-    "elevation": 28.350052,
-    "load": 34,
-    "calories": 349,
-    "max_hr": 163,
-    "stride": 0.76551527,
-    "hr_zones": [
-      600,
-      433,
-      1174,
-      4,
-      0,
-      0,
-      0
-    ],
-    "ai_analysis": "<p>Không thể phân tích lúc này.</p>",
-    "raw_date": "2026-07-31T17:06:21"
   }
 ]
